@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Visitor Insights</title><link rel="stylesheet" href="/style.css"></head>
+<body class="site">
+<header class="top"><a class="brand" href="/">✦ Visitor<span>Insights</span></a><a class="admin-link" href="/admin.html">Admin login ↗</a></header>
+<main class="hero"><div class="eyebrow">PRIVACY-FIRST ANALYTICS</div><h1>Understand your<br><span>website audience.</span></h1><p class="lead">A simple visitor analytics demo. Choose whether to share basic device and visit information to help the site owner understand site traffic.</p>
+<div class="hero-card"><div class="pulse"></div><div><b>Transparent visitor analytics</b><small>No hidden GPS tracking. No collection of contacts, passwords, or Gmail details.</small></div></div>
+</main>
+<footer>Visitor Insights · <a href="/privacy.html">Privacy notice</a></footer>
+<div id="consent" class="consent" role="dialog" aria-label="Analytics consent"><div><b>Allow basic visitor analytics?</b><p>If you agree, we’ll send the site owner your IP address (provided by the network), approximate location from IP, browser and device details, page visited, and visit time. You can decline and still use this site.</p></div><div class="consent-actions"><button id="decline" class="btn secondary">Decline</button><button id="accept" class="btn">Allow analytics</button></div></div>
+<script>
+const banner=document.querySelector('#consent');
+if(localStorage.getItem('analytics-choice')) banner.hidden=true;
+document.querySelector('#decline').onclick=()=>{localStorage.setItem('analytics-choice','no');banner.hidden=true};
+document.querySelector('#accept').onclick=async()=>{
+ localStorage.setItem('analytics-choice','yes');banner.hidden=true;
+ const ua=navigator.userAgent;
+ const browser=/Edg\//.test(ua)?'Edge':/Firefox\//.test(ua)?'Firefox':/Chrome\//.test(ua)?'Chrome':/Safari\//.test(ua)?'Safari':'Other';
+ const os=/Windows/.test(ua)?'Windows':/Android/.test(ua)?'Android':/iPhone|iPad|iPod/.test(ua)?'iOS':/Mac OS/.test(ua)?'macOS':/Linux/.test(ua)?'Linux':'Other';
+ const device=/tablet|ipad/i.test(ua)?'Tablet':/mobile|iphone|android/i.test(ua)?'Mobile':'Desktop';
+ try{await fetch('/api/visit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({browser,os,device,screen:`${screen.width}×${screen.height}`,timezone:Intl.DateTimeFormat().resolvedOptions().timeZone,page:location.pathname})})}catch(e){}
+};
+if(localStorage.getItem('analytics-choice')==='yes') document.querySelector('#consent').hidden=true;
+</script></body></html>
